@@ -5,15 +5,15 @@
 ## Docker
 创建指定网络
 ``` 
-docker network create geteway
+docker network create gateway
 ```
 打包镜像
 ```
-docker build -t geteway .
+docker build -t gateway .
 ```
 创建容器
 ```
-docker run --network=geteway -d -p 5000:80 --name gateway gateway
+docker run --network=gateway -d -p 5000:80 --name gateway gateway:latest
 ```
 
 api：http://api/api
