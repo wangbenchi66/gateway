@@ -1,0 +1,39 @@
+{
+  "Routes": [
+    //{
+    //  //万能模板："/{url}"  ；万能模板的优先级最低，只要有其它的路由模板，其它的路由模板则会优先生效
+    //  "UpstreamPathTemplate": "/{url}", //上游请求地址模板
+    //  "UpstreamHttpMethod": [ //上游请求方式
+    //    "Get",
+    //    "Post"
+    //  ],
+    //  "DownstreamPathTemplate": "/{url}", //下游跳转地址模板；将用户的请求 /post/1 转发到 localhost/api/post/1
+    //  "DownstreamScheme": "http",
+    //  "DownstreamHostAndPorts": [ //下游服务的地址，如果使用LoadBalancer（负载均衡算法配置项）的话这里可以填多项
+    //    {
+    //      "Host": "appliance.abc.com.cn",
+    //      "Port": 80
+    //    }
+    //  ]
+    //},
+    {
+      "UpstreamPathTemplate": "/api/{url}", //上游请求地址
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/{url}", //下游转发地址
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7000
+        }
+      ]
+    }
+  ]
+  //,
+  //"GlobalConfiguration": {
+  //  "BaseUrl": "http://localhost:5041",
+  //  "Host": "localhost",
+  //  "Port": "8500",
+  //  "Type": "Consul"
+  //}
+}
