@@ -33,8 +33,8 @@ app.UseSwaggerUI(c =>
 });
 app.UseKnife4UI(c =>
 {
-    c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "api");
-    c.RoutePrefix = ""; // serve the UI at root
+    c.SwaggerEndpoint("../api/swagger/v1/swagger.json", "api");
+    c.RoutePrefix = "k4j"; // serve the UI at root
 });
 app.UseOcelot().Wait();
 app.Run();
