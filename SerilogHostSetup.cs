@@ -91,7 +91,7 @@ namespace Net7.Core
                 EmitEventFailure = EmitEventFailureHandling.RaiseCallback, // 消息发送失败时，执行回调函数 FailureCallback
                 FailureCallback = FailureCallback,
                 AutoRegisterTemplate = true,
-                AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv8,
+                AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
                 ModifyConnectionSettings = conn =>
                 {
                     if (options.UserName.IsNullOrEmpty()||options.Password.IsNullOrEmpty())

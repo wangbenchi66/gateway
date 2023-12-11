@@ -1,0 +1,17 @@
+version: '3.1'
+services:
+  gateway:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: gateway:${VERSION}
+    container_name: gateway
+    ports:
+      - "5000:80"
+    volumes:
+      - /www/wwwroot/gatewaySerilog:/app/Serilog
+    networks:
+      - gateway
+networks:
+ gateway:
+  external: true
