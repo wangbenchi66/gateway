@@ -22,13 +22,16 @@ builder.Services.AddSwaggerGen(c =>
           );
 
 var EnvironmentName = builder.Environment.EnvironmentName;
+//根据环境变量加载配置文件
+builder.Configuration.AddJsonFile($"appsettings.{EnvironmentName}.json", optional: false, reloadOnChange: true);
+
+
+
 builder.Configuration.AddJsonFile($"Ocelot.{EnvironmentName}.Api.json", optional: false, reloadOnChange: true);
 builder.Services.AddOcelot(builder.Configuration);
 
 
 builder.Services.AddEndpointsApiExplorer();
-//根据环境变量加载配置文件
-builder.Configuration.AddJsonFile($"appsettings.{EnvironmentName}.json", optional: false, reloadOnChange: true);
 
 var configuration = builder.Configuration;
 builder.Host.AddSerilogHost(builder.Services, configuration);
