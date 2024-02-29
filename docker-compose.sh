@@ -1,11 +1,11 @@
 #!/bin/bash
 #current_time=$(date +"%Y%m%d%H%M%S")
-# current_time=$(git log -n 1 --pretty=format:%H)
-# echo ------------------------------------------
-# echo VERSION=$current_time > .env
-# echo ------------------------------------------
-# echo 设置版本:$current_time
-# echo ------------------------------------------
+current_time=$(git log -n 1 --pretty=format:%H)
+echo ------------------------------------------
+echo VERSION=$current_time > .env
+echo ------------------------------------------
+echo 设置版本:$current_time
+echo ------------------------------------------
 git checkout -- .
 git pull
 git log -n 1
