@@ -1,5 +1,6 @@
 #!/bin/bash
-current_time=$(date +"%Y%m%d%H%M%S")
+#current_time=$(date +"%Y%m%d%H%M%S")
+current_time=$(git log -n 1 --pretty=format:%H)
 echo ------------------------------------------
 echo VERSION=$current_time > .env
 echo ------------------------------------------
