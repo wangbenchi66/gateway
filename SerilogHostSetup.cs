@@ -4,13 +4,7 @@
  * 创建时间：2023/04/12 14:35:23
  *----------------------------------------------------------------*/
 
-using System.Net;
 using Masuit.Tools;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Net7.Configuration;
 using Serilog;
 using Serilog.Events;
@@ -21,7 +15,6 @@ namespace Net7.Core
 {
     public static class SerilogHostSetup
     {
-
         /// <summary>
         /// 添加Serilog
         /// </summary>
@@ -33,7 +26,7 @@ namespace Net7.Core
             Log.Logger = new LoggerConfiguration()
                     .ConfigureFile(options.File)
                     .ConfigureConsole(options.Console)
-                    .ConfigureElasticsearch(options.Elasticsearch)
+                    .ConfigureElasticsearch(options.Elasticsearch).Result
                     .CreateLogger();
             builder.UseSerilog();
         }
@@ -47,7 +40,7 @@ namespace Net7.Core
             app.UseSerilogRequestLogging();
         }
 
-        static LoggerConfiguration ConfigureFile(this LoggerConfiguration logger, SerilogFileOptions options)
+        private static LoggerConfiguration ConfigureFile(this LoggerConfiguration logger, SerilogFileOptions options)
         {
             if (options == null || options.Minlevels == null || !options.Minlevels.Any())
                 return logger;
@@ -68,7 +61,8 @@ namespace Net7.Core
             }
             return logger;
         }
-        static LoggerConfiguration ConfigureConsole(this LoggerConfiguration logger, SerilogConsoleOptions options)
+
+        private static LoggerConfiguration ConfigureConsole(this LoggerConfiguration logger, SerilogConsoleOptions options)
         {
             if (options == null) return logger;
             logger.WriteTo.Console(
@@ -78,10 +72,17 @@ namespace Net7.Core
             return logger;
         }
 
-        static LoggerConfiguration ConfigureElasticsearch(this LoggerConfiguration logger, SerilogElasticsearchOptions options)
+        private static async Task<LoggerConfiguration> ConfigureElasticsearch(this LoggerConfiguration logger, SerilogElasticsearchOptions options)
         {
-            if (options == null||options.Nodes.FirstOrDefault().IsNullOrEmpty()) return logger;
+            if (options == null || options.Nodes.FirstOrDefault().IsNullOrEmpty()) return logger;
             List<Uri> uris = options.Nodes.Select(x => new Uri(x)).ToList();
+            //请求uris如果超时则不连接
+            uris = await PingAndFilterUrisAsync(uris);
+            if (uris.Count == 0)
+            {
+                return logger;
+            }
+
             logger.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(uris)
             {
                 IndexFormat = options.Indexformat,
@@ -94,7 +95,7 @@ namespace Net7.Core
                 AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
                 ModifyConnectionSettings = conn =>
                 {
-                    if (options.UserName.IsNullOrEmpty()||options.Password.IsNullOrEmpty())
+                    if (options.UserName.IsNullOrEmpty() || options.Password.IsNullOrEmpty())
                     {
                         conn.BasicAuthentication(options.UserName, options.Password);
                     }
@@ -103,10 +104,12 @@ namespace Net7.Core
             });
             return logger;
         }
-        static void FailureCallback(LogEvent e)
+
+        private static void FailureCallback(LogEvent e)
         {
-            Console.WriteLine("日志记录失败，信息：" + e.MessageTemplate);
+            //Console.WriteLine("日志记录失败，信息：" + e.MessageTemplate);
         }
+
         //static void ConfigureEmail(this LoggerConfiguration serilogConfig,SerilogEmailOptions options)
         //{
         //    if (options == null) return;
@@ -123,5 +126,42 @@ namespace Net7.Core
         //                },
         //                restrictedToMinimumLevel: LogEventLevel.Error);
         //}
+
+        /// <summary>
+        /// 测试节点是否可用
+        /// </summary>
+        /// <param name="uris"></param>
+        /// <returns></returns>
+        private static async Task<List<Uri>> PingAndFilterUrisAsync(List<Uri> uris)
+        {
+            using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(3) };
+
+            var successfulUris = new List<Uri>();
+
+            foreach (var item in uris)
+            {
+                try
+                {
+                    // Add "_cluster/health" endpoint to ping the node
+                    string healthCheckUri = $"{item.AbsoluteUri}";
+                    HttpResponseMessage response = await httpClient.GetAsync(healthCheckUri);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        successfulUris.Add(item);
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                    Console.WriteLine($"请求至 '{item}' 超时。");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"请求至 '{item}' 时发生错误：{ex.Message}");
+                }
+            }
+
+            return successfulUris;
+        }
     }
 }

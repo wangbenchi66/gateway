@@ -1,8 +1,11 @@
+using IGeekFan.AspNetCore.Knife4jUI;
 using Microsoft.OpenApi.Models;
+using Net7.Core;
+using Ocelot.Cache.CacheManager;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using IGeekFan.AspNetCore.Knife4jUI;
-using Net7.Core;
+using Ocelot.Provider.Consul;
+using Ocelot.Provider.Polly;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,9 +29,15 @@ var EnvironmentName = builder.Environment.EnvironmentName;
 builder.Configuration.AddJsonFile($"appsettings.{EnvironmentName}.json", optional: false, reloadOnChange: true);
 
 
-
+//¼ÓÔØOcelot
 builder.Configuration.AddJsonFile($"Ocelot.{EnvironmentName}.Api.json", optional: false, reloadOnChange: true);
-builder.Services.AddOcelot(builder.Configuration);
+//Èç¿ªÆôÈÛ¶Ï±ØÐë¿ªÆô»º´æ ·ñÔò»ØÊ§°Ü
+builder.Services
+    .AddOcelot(builder.Configuration)
+    .AddPolly()
+    .AddCacheManager(settings => { settings.WithDictionaryHandle(); })
+    //.AddConsul()
+    ;
 
 
 builder.Services.AddEndpointsApiExplorer();

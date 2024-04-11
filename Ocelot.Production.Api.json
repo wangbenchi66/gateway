@@ -28,14 +28,51 @@
           "Host": "api",
           "Port": 80
         }
-      ]
+      ],
+      "DownstreamHeaderTransform": {
+        "ServerInfo": "GateWay" //添加自定义信息
+      },
+      //优先级 越大优先级越高
+      "Priority": 0,
+      //限流
+      "RateLimitOptions": {
+        //白名单，也就是不受限流控制的客户端
+        "ClientWhitelist": [],
+        //是否开启限流
+        "EnableRateLimiting": true,
+        //在一段时间内允许的请求次数
+        "Period": "1s",
+        "Limit": 10,
+        //客户端的重试间隔数，也就是客户端间隔多长时间可以重试
+        "PeriodTimespan": 3,
+        //限流以后的提示信息
+        "QuotaExceededMessage": "您的请求量超过了配额1/10分钟",
+        //超出配额时，返回的http状态码 状态码409
+        "HttpStatusCode": 999
+      },
+      //熔断 返回状态码403
+      "QoSOptions": {
+        //在熔断之前允许的异常次数
+        "ExceptionsAllowedBeforeBreaking": 5,
+        //熔断时长 ，单位毫秒
+        "DurationOfBreak": 2000,
+        //请求超时设置, 单位毫秒
+        "TimeoutValue": 30000
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 3,
+        "Region": "api"
+      }
     }
   ]
-  //,
+  //],
   //"GlobalConfiguration": {
-  //  "BaseUrl": "http://localhost:5041",
+  //  "BaseUrl": "http://localhost:5000",
   //  "Host": "localhost",
-  //  "Port": "8500",
-  //  "Type": "Consul"
+  //  "SwaggerProvider": {
+  //    "Name": "Swagger",
+  //    "Url": "/swagger",
+  //    "Version": "api"
+  //  }
   //}
 }

@@ -4,7 +4,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    image: gateway:${CICD_IMAGE}:${CICD_GIT_BRANCH}-${CICD_GIT_COMMIT}-${CICD_EXECUTION_SEQUENCE}
+    image: gateway:${VERSION}
     container_name: gateway
     ports:
       - "5000:80"
