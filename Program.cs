@@ -1,10 +1,10 @@
+using Gateway.Middlewares;
 using IGeekFan.AspNetCore.Knife4jUI;
 using Microsoft.OpenApi.Models;
 using Net7.Core;
 using Ocelot.Cache.CacheManager;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Ocelot.Provider.Consul;
 using Ocelot.Provider.Polly;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -62,6 +62,10 @@ app.UseKnife4UI(c =>
 });
 
 app.UseSerilogSetup();
+app.UseMiddleware<ExceptionMidd>();
+app.UseMiddleware<ReqResLogMidd>();
+//app.UseRequestIdMiddleware();
+//app.UseResponderMiddleware();
 
 app.UseOcelot().Wait();
 app.Run();

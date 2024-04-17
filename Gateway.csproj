@@ -9,8 +9,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Middlewares\ReqResLogMidd.cs~RF6be093.TMP" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="IGeekFan.AspNetCore.Knife4jUI" Version="0.0.16" />
-		<PackageReference Include="Masuit.Tools.Core" Version="2.6.8.2" />
+		<PackageReference Include="Masuit.Tools.Core" Version="2.6.9.9" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.13" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
 		<PackageReference Include="Ocelot" Version="23.2.2" />
