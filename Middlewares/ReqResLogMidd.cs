@@ -28,10 +28,14 @@ namespace Gateway.Middlewares
         public async Task InvokeAsync(HttpContext context)
         {
             //上传体中包含文件时跳过
-            if (!context.Request.Form.Files.IsNullOrEmpty())
+            //判断请求类型
+            if (context.Request.ContentType != null && (context.Request.ContentType.Contains("multipart/form-data") || context.Request.ContentType.Contains("x-www-form-urlencoded")))
             {
-                await _next(context);
-                return;
+                if (!context.Request.Form.Files.IsNullOrEmpty())
+                {
+                    await _next(context);
+                    return;
+                }
             }
 
             //路径包含swagger时跳过
@@ -43,6 +47,8 @@ namespace Gateway.Middlewares
             else
             {
                 await Console.Out.WriteLineAsync($"--------------------------------------------------------------------");
+                //时间
+                await Console.Out.WriteLineAsync($" 时间: {DateTime.Now:G}");
                 // 启用请求体缓冲
                 context.Request.EnableBuffering();
                 // 获取原始请求体
