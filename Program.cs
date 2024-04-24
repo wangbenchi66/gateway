@@ -62,6 +62,7 @@ app.UseKnife4UI(c =>
 });
 
 app.UseSerilogSetup();
+app.UseMiddleware<ReqIgnoreMidd>();
 app.UseMiddleware<ExceptionMidd>();
 app.UseMiddleware<ReqResLogMidd>();
 //app.UseRequestIdMiddleware();

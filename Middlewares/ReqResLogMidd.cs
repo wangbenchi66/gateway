@@ -1,6 +1,4 @@
-﻿using Masuit.Tools;
-
-namespace Gateway.Middlewares
+﻿namespace Gateway.Middlewares
 {
     /// <summary>
     /// 请求与响应数据中间件
@@ -27,59 +25,51 @@ namespace Gateway.Middlewares
         /// <returns>异步任务</returns>
         public async Task InvokeAsync(HttpContext context)
         {
-            //上传体中包含文件时跳过
-            //判断请求类型
-            if (context.Request.ContentType != null && (context.Request.ContentType.Contains("multipart/form-data") || context.Request.ContentType.Contains("x-www-form-urlencoded")))
+            //过滤请求路径是/的
+            if (context.Request.Path.Value == "/")
             {
-                if (!context.Request.Form.Files.IsNullOrEmpty())
-                {
-                    await _next(context);
-                    return;
-                }
+                await _next(context);
+                return;
             }
-
-            //路径包含swagger时跳过
+            //包含swagger则不打印日志
             if (context.Request.Path.Value.Contains("swagger"))
             {
                 await _next(context);
                 return;
             }
-            else
+            await Console.Out.WriteLineAsync($"--------------------------------------------------------------------");
+            //时间
+            await Console.Out.WriteLineAsync($" 时间: {DateTime.Now:G}");
+            // 启用请求体缓冲
+            context.Request.EnableBuffering();
+            // 获取原始请求体
+            Stream originalBody = context.Response.Body;
+            try
             {
-                await Console.Out.WriteLineAsync($"--------------------------------------------------------------------");
-                //时间
-                await Console.Out.WriteLineAsync($" 时间: {DateTime.Now:G}");
-                // 启用请求体缓冲
-                context.Request.EnableBuffering();
-                // 获取原始请求体
-                Stream originalBody = context.Response.Body;
-                try
-                {
-                    // 设置请求数据
-                    await RequestDataLog(context);
+                // 设置请求数据
+                await RequestDataLog(context);
 
-                    using (var ms = new MemoryStream())
-                    {
-                        // 设置返回内容
-                        context.Response.Body = ms;
-                        // 调用下一个中间件
-                        await _next(context);
-                        await ResponseDataLog(context.Response);
-                        // 复制响应数据
-                        ms.Position = 0;
-                        await ms.CopyToAsync(originalBody);
-                    }
-                }
-                catch (Exception e)
+                using (var ms = new MemoryStream())
                 {
-                    _logger.LogError($"异常信息:{e.Message}");
+                    // 设置返回内容
+                    context.Response.Body = ms;
+                    // 调用下一个中间件
+                    await _next(context);
+                    await ResponseDataLog(context.Response);
+                    // 复制响应数据
+                    ms.Position = 0;
+                    await ms.CopyToAsync(originalBody);
                 }
-                finally
-                {
-                    //context.Request.Body = originalBody;
-                }
-                await Console.Out.WriteLineAsync("--------------------------------------------------------------------");
             }
+            catch (Exception e)
+            {
+                _logger.LogError($"异常信息:{e.Message}");
+            }
+            finally
+            {
+                //context.Request.Body = originalBody;
+            }
+            await Console.Out.WriteLineAsync("--------------------------------------------------------------------");
         }
 
         /// <summary>
