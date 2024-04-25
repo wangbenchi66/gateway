@@ -60,8 +60,9 @@
         //请求超时设置, 单位毫秒
         "TimeoutValue": 30000
       },
+      //缓存
       "FileCacheOptions": {
-        "TtlSeconds": 3,
+        //"TtlSeconds": 3,
         "Region": "api"
       }
     }

@@ -9,8 +9,7 @@ using Ocelot.Provider.Polly;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Add services to the container. Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 
 
@@ -65,8 +64,6 @@ app.UseSerilogSetup();
 app.UseMiddleware<ReqIgnoreMidd>();
 app.UseMiddleware<ExceptionMidd>();
 app.UseMiddleware<ReqResLogMidd>();
-//app.UseRequestIdMiddleware();
-//app.UseResponderMiddleware();
 
 app.UseOcelot().Wait();
 app.Run();
