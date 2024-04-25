@@ -11,6 +11,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 #设置语言包
 ENV LANG zh_CN.UTF-8
 
+#设置环境变量
+ENV ASPNETCORE_ENVIRONMENT=Production
+#ENV ASPNETCORE_ENVIRONMENT=Development
+
+
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src

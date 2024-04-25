@@ -19,6 +19,7 @@
     {
       "UpstreamPathTemplate": "/api/{url}", //上游请求地址
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHeaderTransform": { "ServerInfo": "api" },
       "DownstreamPathTemplate": "/api/{url}", //下游转发地址
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
