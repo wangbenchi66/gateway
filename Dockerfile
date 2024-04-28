@@ -14,6 +14,7 @@ ENV LANG zh_CN.UTF-8
 #设置环境变量
 ENV ASPNETCORE_ENVIRONMENT=Production
 #ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_HTTP_PORTS=80
 
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
