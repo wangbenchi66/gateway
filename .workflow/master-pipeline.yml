@@ -23,7 +23,7 @@ stages:
         script:
           - '# 请在此输入您想执行的脚本'
           - echo 'Hello Gitee!'
-          - . docker-compose.sh
+          - docker-compose.sh
         notify: []
         strategy:
           retry: '0'
