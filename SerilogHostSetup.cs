@@ -92,7 +92,7 @@ namespace Net7.Core
                 EmitEventFailure = EmitEventFailureHandling.RaiseCallback, // 消息发送失败时，执行回调函数 FailureCallback
                 FailureCallback = FailureCallback,
                 AutoRegisterTemplate = true,
-                AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
+                AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv8,
                 ModifyConnectionSettings = conn =>
                 {
                     if (options.UserName.IsNullOrEmpty() || options.Password.IsNullOrEmpty())
@@ -105,7 +105,7 @@ namespace Net7.Core
             return logger;
         }
 
-        private static void FailureCallback(LogEvent e)
+        private static void FailureCallback(LogEvent logEvent, Exception e)
         {
             //Console.WriteLine("日志记录失败，信息：" + e.MessageTemplate);
         }
