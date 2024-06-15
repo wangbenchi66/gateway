@@ -13,6 +13,7 @@ echo git拉取成功
 echo ------------------------------------------
 echo 开始执行docker-compose编译
 echo ------------------------------------------
+docker push 121.40.220.126:81/net_core/gateway:${VERSION}
 docker-compose up -d
 echo ------------------------------------------
 echo 编译成功
