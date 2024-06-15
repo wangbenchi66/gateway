@@ -1,12 +1,4 @@
 #!/bin/bash
-###
- # @Author: wangbenchi66 69945864@qq.com
- # @Date: 2024-02-05 16:00:17
- # @LastEditors: wangbenchi66 69945864@qq.com
- # @LastEditTime: 2024-06-15 14:14:21
- # @FilePath: \gateway\docker-compose.sh
- # @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
-### 
 #current_time=$(date +"%Y%m%d%H%M%S")
 git checkout -- .
 git pull
