@@ -13,5 +13,6 @@ services:
     networks:
       - gateway
 networks:
- gateway:
+ gateway:   
+  external: true
   name: gateway   
