@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: default
+  labels:
+    app: gateway
+    service: gateway
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: gateway
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: default
+  labels:
+    app: gateway
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: gateway
+        version: v1
+    spec:
+      containers:
+      - name: gateway
+        #image: ${CICD_IMAGE}:${CICD_GIT_BRANCH}-${CICD_GIT_COMMIT}-${CICD_EXECUTION_SEQUENCE}
+        image: 121.40.220.126:81/net_core/gateway:${VERSION}
+        ports:
+        - containerPort: 80     
+      imagePullSecrets:
+        - name: vm128
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gateway
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules: 
+  - host: k8s.gateway.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gateway
+            port:
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gateway
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules: 
+  - host: k8s.gateway.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: gateway
+          servicePort: 80

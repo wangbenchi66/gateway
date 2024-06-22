@@ -1,5 +1,4 @@
 #!/bin/bash
-#current_time=$(date +"%Y%m%d%H%M%S")
 git checkout -- .
 git pull
 git log -n 1
