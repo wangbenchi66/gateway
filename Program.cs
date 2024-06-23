@@ -59,7 +59,7 @@ app.UseKnife4UI(c =>
     c.SwaggerEndpoint("../api/swagger/v1/swagger.json", "api");
     c.RoutePrefix = "k4j"; // serve the UI at root
 });
-
+System.Console.WriteLine("Gateway∆Ù∂Ø");
 app.UseSerilogSetup();
 app.UseMiddleware<ReqIgnoreMidd>();
 app.UseMiddleware<ExceptionMidd>();
