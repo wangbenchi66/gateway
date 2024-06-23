@@ -36,7 +36,7 @@ spec:
       containers:
       - name: gateway
         #image: ${CICD_IMAGE}:${CICD_GIT_BRANCH}-${CICD_GIT_COMMIT}-${CICD_EXECUTION_SEQUENCE}
-        image: 121.40.220.126:81/net_core/gateway:${VERSION}
+        image: 121.40.220.126:81/net_core/gateway:{{VERSION}}
         ports:
         - containerPort: 80     
       imagePullSecrets:
