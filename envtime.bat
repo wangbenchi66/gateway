@@ -19,3 +19,5 @@ if "!hour!" LSS "10" (
 
 echo GIT_COMMIT=%current_time% > .env
 
+docker build -t gateway:%GIT_COMMIT% .
+docker-compose up -d
