@@ -4,7 +4,7 @@ services:
     #build:
     #  context: ./
     #  dockerfile: Dockerfile
-    image: 121.40.220.126:81/net_core/gateway:%GIT_COMMIT%
+    image: gateway:%GIT_COMMIT%
     container_name: gateway
     ports:
       - "5000:80"
