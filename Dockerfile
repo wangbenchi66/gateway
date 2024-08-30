@@ -1,6 +1,6 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM 172.16.0.186:8002/tools/aspnet:8.0 AS base
+FROM 172.16.0.186:8002/dotnet/aspnet:8.0 AS base
 #FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
