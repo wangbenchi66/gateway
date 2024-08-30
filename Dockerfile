@@ -1,6 +1,7 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM 172.16.0.186:8002/tools/aspnet:8.0 AS base
+#FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
 
@@ -20,8 +21,8 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 #ENV ASPNETCORE_ENVIRONMENT=Development
 ENV ASPNETCORE_HTTP_PORTS=80
 
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM 172.16.0.186:8002/dotnet/sdk:8.0 AS build
+#FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Gateway.csproj", "."]
