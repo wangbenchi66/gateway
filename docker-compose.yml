@@ -5,7 +5,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     # image: gateway:%GIT_COMMIT%
-    image: gateway
+    image: gateway:${GIT_COMMIT}
     container_name: gateway
     ports:
       - "5000:80"
