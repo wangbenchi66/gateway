@@ -20,6 +20,7 @@ ENV LANG zh_CN.UTF-8
 ENV ASPNETCORE_ENVIRONMENT=Production
 #ENV ASPNETCORE_ENVIRONMENT=Development
 ENV ASPNETCORE_HTTP_PORTS=80
+# ≤‚ ‘
 
 FROM 172.16.0.186:8002/dotnet/sdk:8.0 AS build
 #FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
