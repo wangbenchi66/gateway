@@ -1,0 +1,16 @@
+version: '3.1'
+services:
+  gateway:
+    # image: gateway:%GIT_COMMIT%
+    image: gateway:${GIT_COMMIT}
+    container_name: gateway
+    ports:
+      - "5000:80"
+    volumes:
+      - /www/wwwroot/gatewaySerilog:/app/Serilog
+    networks:
+      - gateway
+networks:
+ gateway:   
+  external: true
+  name: gateway   
