@@ -30,10 +30,10 @@ pipeline {
                     // IMAGE_TAG = "${branchName}-${gitCommit}"
 
                     // 获取 Git 分支名
-                    def branchName = bat(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+                    def branchName = bat(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim().readLines().drop(1).join(" ")
 
                     // 获取 Git 提交短哈希
-                    def gitCommit = bat(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                    def gitCommit = bat(returnStdout: true, script: 'git rev-parse --short HEAD').trim().readLines().drop(1).join(" ")
 
                     // 合并为镜像标签
                     IMAGE_TAG = branchName+'-'+gitCommit
