@@ -33,8 +33,8 @@ pipeline {
                     // IMAGE_TAG = "${branchName}-${gitCommit}"
 
                     // 输出镜像标签
-                    echo "当前构建标签: ${IMAGE_TAG}"
-                    echo "上次构建标签(本次构建成功后将被删除): ${GIT_PREVIOUS_COMMIT}"
+                    echo "IMAGE_TAG: ${IMAGE_TAG}"
+                    echo "GIT_PREVIOUS_COMMIT: ${GIT_PREVIOUS_COMMIT}"
                 }
             }
          }
