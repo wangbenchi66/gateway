@@ -12,7 +12,9 @@ pipeline {
                 // 从 Gitee 仓库检出代码
                 git credentialsId: 'a6c7625f-1524-4b80-8251-e0d37d5b4dfb', url: 'https://gitee.com/wangbenchi66/gateway.git'
                 // 打印当前的 Git 提交哈希
-                sh 'echo ${GIT_COMMIT}'
+                script {
+                    echo "${env.GIT_COMMIT}"
+                }
             }
         }
         stage('Prepare Environment') {
