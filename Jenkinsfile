@@ -8,7 +8,10 @@ pipeline {
         DOCKER_IMAGE_NAME = 'gateway' // Docker 镜像的名称
         DOCKER_REPO = 'net_core' // Docker 仓库的名称
         DEPLOYMENT_FILE = 'docker-ssh.yml' // 部署使用的 Docker Compose 文件
-        IMAGE_TAG = "${env.CICD_GIT_BRANCH}-${env.CICD_GIT_COMMIT}-${env.CICD_EXECUTION_SEQUENCE}"
+        IMAGE_TAG = "${env.GIT_BRANCH}-${env.GIT_COMMIT}"
+        GIT_PREVIOUS_COMMIT = "${env.GIT_BRANCH}-${env.GIT_PREVIOUS_COMMIT}"
+        //docker-compose发布选项(如果有则只发布指定服务)
+        DEPLOYMENT_SERVICE = ''
     }
 
     stages {
@@ -28,9 +31,10 @@ pipeline {
 
                     // // 合并为镜像标签
                     // IMAGE_TAG = "${branchName}-${gitCommit}"
+
                     // 输出镜像标签
                     echo "IMAGE_TAG: ${IMAGE_TAG}"
-
+                    echo "GIT_PREVIOUS_COMMIT: ${GIT_PREVIOUS_COMMIT}"
                     // 获取 Git 分支名
                     def branchName = bat(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim().readLines().drop(1).join(" ")
 
@@ -52,6 +56,8 @@ pipeline {
                     bat """
                         docker login -u admin -p wangbenchi123 ${REGISTRY_URL}
                         docker build -t ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} .
+                        docker-compose up -d ${DEPLOYMENT_SERVICE}
+                        docker rmi gateway:${GIT_PREVIOUS_COMMIT}
                         docker tag ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                         docker push ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                     """
@@ -66,13 +72,13 @@ pipeline {
                     def deploymentScript = """
                         cd /www/wwwroot/jenkins
                         sed -i 's/\\GIT_COMMIT/${IMAGE_TAG}/g' ${DEPLOYMENT_FILE}
-                        docker-compose -f ${DEPLOYMENT_FILE} up -d
+                        docker-compose -f ${DEPLOYMENT_FILE} up -d ${DEPLOYMENT_SERVICE}
                     """
 
                     sshPublisher(
                         publishers: [
                             sshPublisherDesc(
-                                configName: 'ssh',
+                                configName: '121.40.220.126',
                                 transfers: [
                                     sshTransfer(
                                         execCommand: deploymentScript,
