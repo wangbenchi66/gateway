@@ -8,8 +8,8 @@ pipeline {
         DOCKER_IMAGE_NAME = 'gateway' // Docker 镜像的名称
         DOCKER_REPO = 'net_core' // Docker 仓库的名称
         DEPLOYMENT_FILE = 'docker-ssh.yml' // 部署使用的 Docker Compose 文件
-        IMAGE_TAG = "${env.BRANCH_NAME}-${env.GIT_COMMIT}"
-        GIT_PREVIOUS_COMMIT = "${env.BRANCH_NAME}-${env.GIT_PREVIOUS_COMMIT}"
+        IMAGE_TAG = "${env.GIT_COMMIT}"
+        GIT_PREVIOUS_COMMIT = "${env.GIT_PREVIOUS_COMMIT}"
         //docker-compose发布选项(如果有则只发布指定服务)
         DEPLOYMENT_SERVICE = ''
     }
@@ -33,18 +33,8 @@ pipeline {
                     // IMAGE_TAG = "${branchName}-${gitCommit}"
 
                     // 输出镜像标签
-                    echo "IMAGE_TAG: ${IMAGE_TAG}"
-                    echo "GIT_PREVIOUS_COMMIT: ${GIT_PREVIOUS_COMMIT}"
-                    // // 获取 Git 分支名
-                    // def branchName = bat(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim().readLines().drop(1).join(" ")
-
-                    // // 获取 Git 提交短哈希
-                    // def gitCommit = bat(returnStdout: true, script: 'git rev-parse --short HEAD').trim().readLines().drop(1).join(" ")
-
-                    // // 合并为镜像标签
-                    // IMAGE_TAG = branchName+'-'+gitCommit
-                    // 输出镜像标签
-                    echo "IMAGE_TAG: ${IMAGE_TAG}"
+                    echo "当前构建标签: ${IMAGE_TAG}"
+                    echo "上次构建标签(本次构建成功后将被删除): ${GIT_PREVIOUS_COMMIT}"
                 }
             }
          }
