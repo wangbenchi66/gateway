@@ -36,7 +36,7 @@ pipeline {
                 script {
                     // 使用 Docker 注册表的凭证登录并构建、标记和推送 Docker 镜像
                     sh """
-                        docker login -u admin -p wangbenchi123 ${REGISTRY_URL} --password=wangbenchi123
+                        docker login -u admin -p wangbenchi123 ${REGISTRY_URL}
                         docker build -t gateway:${IMAGE_TAG} .
                         docker tag gateway:${IMAGE_TAG} ${REGISTRY_URL}/net_core/gateway:${IMAGE_TAG}
                         docker push ${REGISTRY_URL}/net_core/gateway:${IMAGE_TAG}
