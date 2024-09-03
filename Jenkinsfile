@@ -11,7 +11,7 @@ pipeline {
         IMAGE_TAG = "${env.GIT_COMMIT}"
         GIT_PREVIOUS_COMMIT = "${env.GIT_PREVIOUS_COMMIT}"
         //docker-compose发布选项(如果有则只发布指定服务)
-        DEPLOYMENT_SERVICE = ''
+        DEPLOYMENT_SERVICE = " "
     }
 
     stages {
