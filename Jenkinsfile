@@ -25,7 +25,9 @@ pipeline {
                     def gitCommit = bat(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 
                     // 合并为镜像标签
-                    env.IMAGE_TAG = "${env.BRANCH_NAME}-${gitCommit}"
+                    IMAGE_TAG = "${env.BRANCH_NAME}-${gitCommit}"
+                    //输出镜像标签
+                    echo "IMAGE_TAG: ${IMAGE_TAG}"
                 }
             }
          }
