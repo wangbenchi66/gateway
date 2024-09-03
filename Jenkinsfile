@@ -28,6 +28,8 @@ pipeline {
 
                     // // 合并为镜像标签
                     // IMAGE_TAG = "${branchName}-${gitCommit}"
+                    // 输出镜像标签
+                    echo "IMAGE_TAG: ${IMAGE_TAG}"
 
                     // 获取 Git 分支名
                     def branchName = bat(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim().readLines().drop(1).join(" ")
