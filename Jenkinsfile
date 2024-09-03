@@ -68,11 +68,11 @@ pipeline {
                                         patternSeparator: '[, ]+',
                                         remoteDirectory: '/www/wwwroot/jenkins', 
                                         sourceFiles: 'docker-ssh.yml'
-                                        verbose: true
                                     )
                                 ],
                                 usePromotionTimestamp: false,
-                                useWorkspaceInPromotion: false
+                                useWorkspaceInPromotion: false,
+                                verbose: true
                             )
                         ]
                     )
