@@ -2,11 +2,14 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY_URL = '121.40.220.126:81'
-        GIT_URL = 'https://gitee.com/wangbenchi66/gateway.git'
-        GIT_CREDENTIALS_ID = 'a6c7625f-1524-4b80-8251-e0d37d5b4dfb'
-        //IMAGE_TAG = "${env.CICD_GIT_BRANCH}-${env.CICD_GIT_COMMIT}-${env.CICD_EXECUTION_SEQUENCE}"
-        IMAGE_TAG = "${env.GIT_COMMIT}"
+        REGISTRY_URL = '121.40.220.126:81' // Docker 注册表的 URL
+        GIT_URL = 'https://gitee.com/wangbenchi66/gateway.git' // Git 仓库的 URL
+        GIT_CREDENTIALS_ID = 'a6c7625f-1524-4b80-8251-e0d37d5b4dfb' // Jenkins 中存储的 Git 凭证 ID
+        IMAGE_TAG = "${env.GIT_COMMIT}" // Docker 镜像的标签，使用 Git 提交哈希
+        BRANCH_NAME = "${env.BRANCH_NAME}" //分支名
+        DOCKER_IMAGE_NAME = 'gateway' // Docker 镜像的名称
+        DOCKER_REPO = 'net_core' // Docker 仓库的名称
+        DEPLOYMENT_FILE = 'docker-ssh.yml' // 部署使用的 Docker Compose 文件
     }
 
     stages {
@@ -16,20 +19,17 @@ pipeline {
             }
         }
         
-        // stage('Set Environment Variables') {
-        //     steps {
-        //         script {
-        //             // 获取 Git 分支名
-        //             // def branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+        stage('Set Environment Variables') {
+            steps {
+                script {
+                    // 获取 Git 提交短哈希
+                    def gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 
-        //             // // 获取 Git 提交短哈希
-        //             // def gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-
-        //             // // 合并为镜像标签
-        //             // IMAGE_TAG = branchName+'-'+gitCommit
-        //         }
-        //     }
-        // }
+                    // 合并为镜像标签
+                    IMAGE_TAG = ${BRANCH_NAME}+'-'+gitCommit
+                }
+            }
+         }
         
         stage('Build Docker Image') {
             steps {
@@ -37,9 +37,9 @@ pipeline {
                     // 使用 Docker 注册表的凭证登录并构建、标记和推送 Docker 镜像
                     bat """
                         docker login -u admin -p wangbenchi123 ${REGISTRY_URL}
-                        docker build -t gateway:${IMAGE_TAG} .
-                        docker tag gateway:${IMAGE_TAG} ${REGISTRY_URL}/net_core/gateway:${IMAGE_TAG}
-                        docker push ${REGISTRY_URL}/net_core/gateway:${IMAGE_TAG}
+                        docker build -t ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} .
+                        docker tag ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
+                        docker push ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                     """
                 }
             }
@@ -51,8 +51,8 @@ pipeline {
                 script {
                     def deploymentScript = """
                         cd /www/wwwroot/jenkins
-                        sed -i 's/\\GIT_COMMIT/${IMAGE_TAG}/g' docker-ssh.yml
-                        docker-compose -f docker-ssh.yml up -d
+                        sed -i 's/\\GIT_COMMIT/${IMAGE_TAG}/g' ${DEPLOYMENT_FILE}
+                        docker-compose -f ${DEPLOYMENT_FILE} up -d
                     """
 
                     sshPublisher(
@@ -68,7 +68,7 @@ pipeline {
                                         noDefaultExcludes: false,
                                         patternSeparator: '[, ]+',
                                         remoteDirectory: '/www/wwwroot/jenkins', 
-                                        sourceFiles: 'docker-ssh.yml'
+                                        sourceFiles: "${DEPLOYMENT_FILE}"
                                     )
                                 ],
                                 usePromotionTimestamp: false,
