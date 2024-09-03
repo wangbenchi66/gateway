@@ -5,7 +5,8 @@ pipeline {
         REGISTRY_URL = '121.40.220.126:81'
         GIT_URL = 'https://gitee.com/wangbenchi66/gateway.git'
         GIT_CREDENTIALS_ID = 'a6c7625f-1524-4b80-8251-e0d37d5b4dfb'
-        IMAGE_TAG = "${env.CICD_GIT_BRANCH}-${env.CICD_GIT_COMMIT}-${env.CICD_EXECUTION_SEQUENCE}"
+        //IMAGE_TAG = "${env.CICD_GIT_BRANCH}-${env.CICD_GIT_COMMIT}-${env.CICD_EXECUTION_SEQUENCE}"
+        IMAGE_TAG = "${env.GIT_COMMIT}"
     }
 
     stages {
@@ -19,13 +20,13 @@ pipeline {
             steps {
                 script {
                     // 获取 Git 分支名
-                    def branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+                    // def branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
 
-                    // 获取 Git 提交短哈希
-                    def gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                    // // 获取 Git 提交短哈希
+                    // def gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 
-                    // 合并为镜像标签
-                    IMAGE_TAG = branchName+'-'+gitCommit
+                    // // 合并为镜像标签
+                    // IMAGE_TAG = branchName+'-'+gitCommit
                 }
             }
         }
@@ -45,7 +46,7 @@ pipeline {
         }
 
         
-        stage('Deploy to Kubernetes') {
+        stage('Deploy to ssh') {
             steps {
                 script {
                     def deploymentScript = """
@@ -57,7 +58,7 @@ pipeline {
                     sshPublisher(
                         publishers: [
                             sshPublisherDesc(
-                                configName: 'k8s',
+                                configName: 'ssh',
                                 transfers: [
                                     sshTransfer(
                                         execCommand: deploymentScript,
