@@ -20,11 +20,13 @@ pipeline {
         stage('Set Environment Variables') {
             steps {
                 script {
+                    // 获取 Git 分支名称
+                    def branchName = bat(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
                     // 获取 Git 提交短哈希
                     def gitCommit = bat(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 
                     // 合并为镜像标签
-                    env.IMAGE_TAG = "${env.BRANCH_NAME}-${gitCommit}"
+                    env.IMAGE_TAG = "${branchName}-${gitCommit}"
                     // 输出镜像标签
                     echo "IMAGE_TAG: ${env.IMAGE_TAG}"
                 }
