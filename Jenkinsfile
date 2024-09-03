@@ -47,7 +47,7 @@ pipeline {
                         docker login -u admin -p wangbenchi123 ${REGISTRY_URL}
                         docker build -t ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} .
                         docker-compose -p ${PROJECT_NAME} up -d ${DEPLOYMENT_SERVICE}
-                        docker rmi gateway:${GIT_PREVIOUS_COMMIT}
+                        docker rmi ${DOCKER_IMAGE_NAME}:${GIT_PREVIOUS_COMMIT}
                         docker tag ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                         docker push ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                     """
