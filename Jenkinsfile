@@ -46,7 +46,7 @@ pipeline {
                     bat """
                         docker login -u admin -p wangbenchi123 ${REGISTRY_URL}
                         docker build -t ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} .
-                        docker-compose up -d ${DEPLOYMENT_SERVICE}
+                        docker-compose -p ${DOCKER_IMAGE_NAME} up -d ${DEPLOYMENT_SERVICE}
                         docker rmi gateway:${GIT_PREVIOUS_COMMIT}
                         docker tag ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                         docker push ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
@@ -62,7 +62,7 @@ pipeline {
                     def deploymentScript = """
                         cd /www/wwwroot/jenkins
                         sed -i 's/\\GIT_COMMIT/${IMAGE_TAG}/g' ${DEPLOYMENT_FILE}
-                        docker-compose -f ${DEPLOYMENT_FILE} up -d ${DEPLOYMENT_SERVICE}
+                        docker-compose -p ${DOCKER_IMAGE_NAME} -f ${DEPLOYMENT_FILE} up -d ${DEPLOYMENT_SERVICE}
                     """
 
                     sshPublisher(

@@ -1,5 +1,4 @@
 # version: '3.1'
-project_name: gateway
 services:
   gateway:
     # image: gateway:%GIT_COMMIT%
