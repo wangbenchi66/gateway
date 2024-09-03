@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     // 获取 Git 提交短哈希
-                    def gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                    def gitCommit = bat(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 
                     // 合并为镜像标签
                     IMAGE_TAG = "${env.BRANCH_NAME}"+'-'+gitCommit
