@@ -37,13 +37,9 @@ pipeline {
             steps {
                 script {
                     // 使用 Docker 注册表的凭证登录并构建、标记和推送 Docker 镜像
-                    bat """
+                    sh """
                         docker login -u admin -p wangbenchi123 ${REGISTRY_URL}
                         docker build -t ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} .
-                        docker-compose -p ${PROJECT_NAME} up -d ${DEPLOYMENT_SERVICE}
-                        docker rmi ${DOCKER_IMAGE_NAME}:${GIT_PREVIOUS_COMMIT}
-                        docker tag ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
-                        docker push ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                     """
                 }
             }
