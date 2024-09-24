@@ -1,6 +1,6 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM 121.40.220.126:81/tools/aspnet:8.0 AS base
+FROM 10.168.1.170:81/tools/aspnet:8.0 AS base
 #FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -21,7 +21,7 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 #ENV ASPNETCORE_ENVIRONMENT=Development
 ENV ASPNETCORE_HTTP_PORTS=80
 
-FROM 121.40.220.126:81/tools/sdk:8.0 AS build
+FROM 10.168.1.170:81/tools/sdk:8.0 AS build
 #FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
