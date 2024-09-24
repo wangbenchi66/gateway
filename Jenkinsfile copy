@@ -15,6 +15,12 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                git credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_URL}"
+            }
+        }
+        
         stage('Set Environment Variables') {
             steps {
                 script {
@@ -45,6 +51,42 @@ pipeline {
                         docker tag ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                         docker push ${REGISTRY_URL}/${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                     """
+                }
+            }
+        }
+
+        
+        stage('Deploy to ssh') {
+            steps {
+                script {
+                    def deploymentScript = """
+                        cd /www/wwwroot/jenkins
+                        sed -i 's/\\GIT_COMMIT/${IMAGE_TAG}/g' ${DEPLOYMENT_FILE}
+                        docker-compose -p ${PROJECT_NAME} -f ${DEPLOYMENT_FILE} up -d ${DEPLOYMENT_SERVICE}
+                    """
+
+                    sshPublisher(
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: '121.40.220.126',
+                                transfers: [
+                                    sshTransfer(
+                                        execCommand: deploymentScript,
+                                        execTimeout: 120000,
+                                        flatten: false,
+                                        makeEmptyDirs: false,
+                                        noDefaultExcludes: false,
+                                        patternSeparator: '[, ]+',
+                                        remoteDirectory: '/www/wwwroot/jenkins', 
+                                        sourceFiles: "${DEPLOYMENT_FILE}"
+                                    )
+                                ],
+                                usePromotionTimestamp: false,
+                                useWorkspaceInPromotion: false,
+                                verbose: true
+                            )
+                        ]
+                    )
                 }
             }
         }
