@@ -1,17 +1,30 @@
 pipeline {
-    agent {
-        node {
-        label 'maven'
-        }
+  agent {
+    node {
+      label 'maven'
     }
 
-    stages {
-        stage('Build Docker Image') {
-            steps {
-                container('maven') {
-                    sh 'docker build -f Dockerfile -t gateway-$BRANCH_NAME-$BUILD_NUMBER .'
-                }
-            }
+  }
+  stages {
+    stage('docker build') {
+      agent none
+      steps {
+        container('maven') {
+          sh 'env'
+          sh 'docker build -t $JOB_BASE_NAME:$BUILD_ID .'
+          sh 'ls -l .'
+          sh 'envsubst < deployment.yaml > deployment-substituted.yaml'
+          sh 'cat deployment-substituted.yaml'
         }
+      }
     }
+
+    stage('k8s') {
+      agent none
+      steps {
+        kubernetesDeploy(enableConfigSubstitution: true, deleteResource: false, kubeconfigId: 'k8s', configs: 'deployment-substituted.yaml', dockerCredentials: [])
+      }
+    }
+
+  }
 }
