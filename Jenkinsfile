@@ -15,16 +15,9 @@ pipeline {
           sh 'ls -l .'
           sh 'envsubst < deployment.yaml > deployment-substituted.yaml'
           sh 'cat deployment-substituted.yaml'
+          sh 'kubectl apply -f deployment-substituted.yaml'
         }
       }
     }
-
-    stage('k8s') {
-      agent none
-      steps {
-        kubernetesDeploy(enableConfigSubstitution: true, deleteResource: false, kubeconfigId: 'k8s', configs: 'deployment-substituted.yaml', dockerCredentials: [])
-      }
-    }
-
   }
 }
